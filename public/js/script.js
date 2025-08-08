@@ -320,6 +320,38 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.classList.add('loaded');
     }, 100);
 
+    // Bouton retour en haut (flottant)
+    (function setupBackToTop() {
+        try {
+            if (document.getElementById('scrollTopBtn')) return;
+            const btn = document.createElement('button');
+            btn.id = 'scrollTopBtn';
+            btn.className = 'scroll-top-btn';
+            btn.type = 'button';
+            btn.setAttribute('aria-label', 'Retour en haut');
+            btn.innerHTML = '<i aria-hidden="true">↑</i>';
+            document.body.appendChild(btn);
+
+            const threshold = 200;
+            const toggle = () => {
+                if (window.pageYOffset > threshold) btn.classList.add('visible');
+                else btn.classList.remove('visible');
+            };
+
+            const onClick = (e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            window.addEventListener('scroll', utils.debounce(toggle, 50), { passive: true });
+            window.addEventListener('resize', utils.debounce(toggle, 100));
+            window.addEventListener('pageshow', toggle);
+            btn.addEventListener('click', onClick);
+
+            toggle();
+        } catch (_) { /* no-op */ }
+    })();
+
     // Auto-resize de l'iframe FAQ
     const faqFrame = document.getElementById('faqFrame');
     const resizeFaq = () => {

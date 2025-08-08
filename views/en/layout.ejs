@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title || data.name %> — <%= data.title %></title>
+  <meta name="description" content="<%= data.description %>" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <% if (!embed) { %>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <a href="/en"><%= data.name %></a>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="<%= frPath %>" class="nav-link" title="Français">FR</a></li>
+        <li class="nav-item"><a href="/en" class="nav-link">Home</a></li>
+        <li class="nav-item"><a href="/en/about" class="nav-link">About</a></li>
+        <li class="nav-item"><a href="/en/projects" class="nav-link">Projects</a></li>
+        <li class="nav-item"><a href="/en/contact" class="nav-link">Contact</a></li>
+        <li class="nav-item"><a href="/en/faq" class="nav-link">FAQ</a></li>
+        <li class="nav-item"><a href="/en/cv" class="nav-link">CV</a></li>
+      </ul>
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+  </nav>
+  <% } %>
+
+  <main id="main" tabindex="-1">
+    <%- body %>
+  </main>
+
+  <% if (!embed) { %>
+  <footer class="site-footer">
+    <p>
+      <strong>Mathias Legrand</strong> — <%= new Date().getFullYear() %>
+    </p>
+  </footer>
+  <% } %>
+
+  <script src="/js/script.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ - <%= data.name %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { background: var(--bg-primary); }
+    .faq-page { padding: 90px 0 40px; }
+    .faq-header { text-align:center; margin-bottom: 24px; }
+    .faq-header h1 { font-size: 2rem; }
+  </style>
+</head>
+<body>
+  <% if (!embed) { %>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo"><a href="/en"> <%= data.name %></a></div>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="<%= frPath %>" class="nav-link">FR</a></li>
+        <li class="nav-item"><a href="/en" class="nav-link">Home</a></li>
+        <li class="nav-item"><a href="/en/about" class="nav-link">About</a></li>
+        <li class="nav-item"><a href="/en/projects" class="nav-link">Projects</a></li>
+        <li class="nav-item"><a href="/en/contact" class="nav-link">Contact</a></li>
+        <li class="nav-item"><a href="/en/faq" class="nav-link active">FAQ</a></li>
+        <li class="nav-item"><a href="/en/cv" class="nav-link">CV</a></li>
+      </ul>
+      <div class="hamburger"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
+    </div>
+  </nav>
+  <% } %>
+
+  <main class="faq-page">
+    <div class="container">
+      <div class="faq-header">
+        <h1>Frequently Asked Questions</h1>
+        <p class="text-muted">Quick info about replies, quotes, confidentiality, and services</p>
+      </div>
+
+      <section class="faq-section" style="padding:0">
+        <div class="faq-grid">
+          <div class="faq-item">
+            <h3>What’s your response time?</h3>
+            <p>I usually reply within 24–48h on business days. For urgent production incidents, mention it in the subject.</p>
+          </div>
+          <div class="faq-item">
+            <h3>How do quotes work?</h3>
+            <p>We clarify the need (30‑min call), then I send a detailed estimate (scope, deliverables, timeline, daily rate or fixed price) and technical prerequisites.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Confidentiality and NDA?</h3>
+            <p>I can sign an NDA. Sensitive information (access, configs) is handled securely and never exposed publicly.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Technologies & scope</h3>
+            <p>DevOps/Infra (Docker, Kubernetes, CI/CD, Linux), Observability (Zabbix, Grafana), Security & IAM (Keycloak, TLS/SSL, RBAC) and Automation (Python, Shell) — not exhaustive.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Maintenance and support</h3>
+            <p>I provide maintenance, monitoring and updates. Support options (hours, SLA) can be defined based on your needs.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Timeline and availability</h3>
+            <p>Flexible availability depending on workload. A schedule is provided with milestones and regular checkpoints.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Payment terms</h3>
+            <p>Fixed price or daily rate, with a detailed quote and purchase order. Invoices and legal notices provided. Down payment possible depending on the project.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <% if (!embed) { %>
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section"><h3><%= data.name %></h3><p><%= data.title %></p></div>
+      <div class="footer-section"><h4>Contact</h4><p><i class="fas fa-envelope"></i> <%= data.email %></p><p><i class="fas fa-phone"></i> <%= data.phone %></p><p><i class="fas fa-map-marker-alt"></i> <%= data.location %></p></div>
+      <div class="footer-section"><h4>Follow</h4><div class="social-links"><a href="<%= data.social.github %>" target="_blank"><i class="fab fa-github"></i></a><a href="<%= data.social.linkedin %>" target="_blank"><i class="fab fa-linkedin"></i></a></div></div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2025 <%= data.name %>. All rights reserved.</p></div>
+  </footer>
+  <% } %>
+
+  <script src="/js/script.js"></script>
+  <% if (embed) { %>
+  <style>
+    .faq-page { padding: 10px 0 0; }
+    body { background: transparent; }
+  </style>
+  <% } %>
+</body>
+</html>

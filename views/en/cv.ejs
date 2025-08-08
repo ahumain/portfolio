@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mon CV - <%= data.name %></title>
+  <title>CV - <%= data.name %></title>
   <link rel="stylesheet" href="/css/style.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -20,37 +20,37 @@
 <body>
   <nav class="navbar">
     <div class="nav-container">
-      <div class="nav-logo"><a href="/"><%= data.name %></a></div>
+      <div class="nav-logo"><a href="/en"><%= data.name %></a></div>
       <ul class="nav-menu">
-  <li class="nav-item"><a href="<%= enPath %>" class="nav-link">EN</a></li>
-  <li class="nav-item"><a href="/" class="nav-link">Accueil</a></li>
-  <li class="nav-item"><a href="/about" class="nav-link">À propos</a></li>
-  <li class="nav-item"><a href="/projects" class="nav-link">Projets</a></li>
-  <li class="nav-item"><a href="/contact" class="nav-link">Contact</a></li>
-  <li class="nav-item"><a href="/faq" class="nav-link">FAQ</a></li>
-  <li class="nav-item"><a href="/cv" class="nav-link active">CV</a></li>
+        <li class="nav-item"><a href="<%= frPath %>" class="nav-link">FR</a></li>
+        <li class="nav-item"><a href="/en" class="nav-link">Home</a></li>
+        <li class="nav-item"><a href="/en/about" class="nav-link">About</a></li>
+        <li class="nav-item"><a href="/en/projects" class="nav-link">Projects</a></li>
+        <li class="nav-item"><a href="/en/contact" class="nav-link">Contact</a></li>
+        <li class="nav-item"><a href="/en/faq" class="nav-link">FAQ</a></li>
+        <li class="nav-item"><a href="/en/cv" class="nav-link active">CV</a></li>
       </ul>
       <div class="hamburger"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
     </div>
   </nav>
 
   <main class="cv-container">
-    <h1>Mon CV</h1>
+    <h1>My CV</h1>
     <div class="cv-actions">
-      <a class="btn btn-primary" href="/files/CV-Mathias.pdf" target="_blank"><i class="fas fa-file-pdf"></i>Ouvrir dans un nouvel onglet</a>
-      <a class="btn btn-outline" href="/files/CV-Mathias.pdf" download><i class="fas fa-download"></i>Télécharger le PDF</a>
+      <a class="btn btn-primary" href="/files/CV-Mathias.pdf" target="_blank"><i class="fas fa-file-pdf"></i>Open in new tab</a>
+      <a class="btn btn-outline" href="/files/CV-Mathias.pdf" download><i class="fas fa-download"></i>Download PDF</a>
     </div>
-    <iframe class="cv-frame" src="/files/CV-Mathias.pdf#view=FitH" title="CV de <%= data.name %>"></iframe>
-    <p class="note">Si l’aperçu n’apparaît pas, utilisez les boutons ci-dessus pour ouvrir ou télécharger le CV.</p>
+    <iframe class="cv-frame" src="/files/CV-Mathias.pdf#view=FitH" title="CV of <%= data.name %>"></iframe>
+    <p class="note">If the preview doesn’t load, use the buttons above to open or download the CV.</p>
   </main>
 
   <footer class="footer">
     <div class="footer-content">
       <div class="footer-section"><h3><%= data.name %></h3><p><%= data.title %></p></div>
       <div class="footer-section"><h4>Contact</h4><p><i class="fas fa-envelope"></i> <%= data.email %></p><p><i class="fas fa-phone"></i> <%= data.phone %></p><p><i class="fas fa-map-marker-alt"></i> <%= data.location %></p></div>
-      <div class="footer-section"><h4>Suivez-moi</h4><div class="social-links"><a href="<%= data.social.github %>" target="_blank"><i class="fab fa-github"></i></a><a href="<%= data.social.linkedin %>" target="_blank"><i class="fab fa-linkedin"></i></a></div></div>
+      <div class="footer-section"><h4>Follow</h4><div class="social-links"><a href="<%= data.social.github %>" target="_blank"><i class="fab fa-github"></i></a><a href="<%= data.social.linkedin %>" target="_blank"><i class="fab fa-linkedin"></i></a></div></div>
     </div>
-    <div class="footer-bottom"><p>&copy; 2025 <%= data.name %>. Tous droits réservés.</p></div>
+    <div class="footer-bottom"><p>&copy; 2025 <%= data.name %>. All rights reserved.</p></div>
   </footer>
 
   <script src="/js/script.js"></script>

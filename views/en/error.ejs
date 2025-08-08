@@ -1,23 +1,15 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= status %> - <%= message %></title>
+  <title><%= status %> - <%= message || 'Error' %></title>
   <link rel="stylesheet" href="/css/style.css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     .error-section{padding:100px 0;text-align:center}
-    .error-code{
-      font-size:clamp(3.5rem,12vw,8rem);
-      line-height:1;
-      font-weight:900;
-      color:#ef4444;
-      margin:0 0 10px;
-      letter-spacing:2px;
-      text-shadow:0 6px 18px rgba(239,68,68,.25), 0 2px 8px rgba(0,0,0,.12);
-    }
+    .error-code{font-size:clamp(3.5rem,12vw,8rem);line-height:1;font-weight:900;color:#ef4444;margin:0 0 10px;letter-spacing:2px;text-shadow:0 6px 18px rgba(239,68,68,.25), 0 2px 8px rgba(0,0,0,.12)}
     .error-message{font-size:1.25rem;color:var(--text-secondary);margin:10px 0 30px}
     .error-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
   </style>
@@ -25,15 +17,15 @@
   <body>
     <nav class="navbar">
       <div class="nav-container">
-        <div class="nav-logo"><a href="/"> <%= data.name %></a></div>
+        <div class="nav-logo"><a href="/en"> <%= data.name %></a></div>
         <ul class="nav-menu">
-          <li class="nav-item"><a href="<%= enPath %>" class="nav-link">EN</a></li>
-          <li class="nav-item"><a href="/" class="nav-link">Accueil</a></li>
-          <li class="nav-item"><a href="/about" class="nav-link">À propos</a></li>
-          <li class="nav-item"><a href="/projects" class="nav-link">Projets</a></li>
-          <li class="nav-item"><a href="/contact" class="nav-link">Contact</a></li>
-          <li class="nav-item"><a href="/faq" class="nav-link">FAQ</a></li>
-          <li class="nav-item"><a href="/cv" class="nav-link">CV</a></li>
+          <li class="nav-item"><a href="<%= frPath %>" class="nav-link">FR</a></li>
+          <li class="nav-item"><a href="/en" class="nav-link">Home</a></li>
+          <li class="nav-item"><a href="/en/about" class="nav-link">About</a></li>
+          <li class="nav-item"><a href="/en/projects" class="nav-link">Projects</a></li>
+          <li class="nav-item"><a href="/en/contact" class="nav-link">Contact</a></li>
+          <li class="nav-item"><a href="/en/faq" class="nav-link">FAQ</a></li>
+          <li class="nav-item"><a href="/en/cv" class="nav-link">CV</a></li>
         </ul>
         <div class="hamburger"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
       </div>
@@ -42,13 +34,13 @@
     <section class="error-section">
       <div class="container">
         <h1 class="error-code"><%= status %></h1>
-        <p class="error-message"><%= message %></p>
+        <p class="error-message"><%= message || 'Something went wrong' %></p>
         <% if (details) { %>
           <p class="error-details"><%= details %></p>
         <% } %>
         <div class="error-actions">
-          <a href="/" class="btn btn-primary"><i class="fas fa-home"></i> Retour à l’accueil</a>
-          <a href="/contact" class="btn btn-secondary"><i class="fas fa-envelope"></i> Contacter</a>
+          <a href="/en" class="btn btn-primary"><i class="fas fa-home"></i> Back to home</a>
+          <a href="/en/contact" class="btn btn-secondary"><i class="fas fa-envelope"></i> Contact</a>
         </div>
       </div>
     </section>
@@ -63,14 +55,14 @@
           <p><i class="fas fa-map-marker-alt"></i> <%= data.location %></p>
         </div>
         <div class="footer-section">
-          <h4>Suivez-moi</h4>
+          <h4>Follow</h4>
           <div class="social-links">
             <a href="<%= data.social.github %>" target="_blank"><i class="fab fa-github"></i></a>
             <a href="<%= data.social.linkedin %>" target="_blank"><i class="fab fa-linkedin"></i></a>
           </div>
         </div>
       </div>
-      <div class="footer-bottom"><p>&copy; 2025 <%= data.name %>. Tous droits réservés.</p></div>
+      <div class="footer-bottom"><p>&copy; 2025 <%= data.name %>. All rights reserved.</p></div>
     </footer>
     <script src="/js/script.js"></script>
   </body>

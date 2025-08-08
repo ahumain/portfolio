@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio - <%= data.name %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <a href="/en"><%= data.name %></a>
+      </div>
+      <ul class="nav-menu">
+  <li class="nav-item"><a href="<%= frPath %>" class="nav-link">FR</a></li>
+        <li class="nav-item"><a href="/en" class="nav-link active">Home</a></li>
+        <li class="nav-item"><a href="/en/about" class="nav-link">About</a></li>
+        <li class="nav-item"><a href="/en/projects" class="nav-link">Projects</a></li>
+        <li class="nav-item"><a href="/en/contact" class="nav-link">Contact</a></li>
+        <li class="nav-item"><a href="/en/faq" class="nav-link">FAQ</a></li>
+        <li class="nav-item"><a href="/en/cv" class="nav-link">CV</a></li>
+      </ul>
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1>Hello, I’m <span class="highlight"><%= data.name %></span></h1>
+        <h2><%= data.title %></h2>
+        <p><%= data.description %></p>
+        <div class="hero-buttons">
+          <a href="/en/projects" class="btn btn-primary">View projects</a>
+          <a href="/en/contact" class="btn btn-secondary">Contact me</a>
+          <a href="/files/CV-Mathias.pdf" class="btn btn-outline" download>Download my CV</a>
+        </div>
+      </div>
+      <div class="hero-image">
+        <div class="profile-card">
+          <div class="profile-image">
+            <img src="/images/profile.jpg" alt="Profile photo" onerror="this.src='/images/placeholder-profile.jpg'">
+          </div>
+          <div class="profile-info">
+            <h3><%= data.name %></h3>
+            <p><%= data.title %></p>
+            <div class="social-links">
+              <a href="<%= data.social.github %>" target="_blank"><i class="fab fa-github"></i></a>
+              <a href="<%= data.social.linkedin %>" target="_blank"><i class="fab fa-linkedin"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <span>Scroll</span>
+      <i class="fas fa-arrow-down"></i>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section class="skills">
+    <div class="container">
+      <h2>Skills</h2>
+      <div class="skills-grid">
+        <% data.skills.forEach(skill => { %>
+        <div class="skill-item">
+          <div class="skill-name"><%= skill.name %></div>
+          <div class="skill-bar">
+            <div class="skill-progress" data-width="<%= skill.level %>%"></div>
+          </div>
+          <div class="skill-percentage"><%= skill.level %>%</div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3><%= data.name %></h3>
+        <p><%= data.title %></p>
+      </div>
+      <div class="footer-section">
+        <h4>Contact</h4>
+        <p><i class="fas fa-envelope"></i> <%= data.email %></p>
+        <p><i class="fas fa-phone"></i> <%= data.phone %></p>
+        <p><i class="fas fa-map-marker-alt"></i> <%= data.location %></p>
+      </div>
+      <div class="footer-section">
+        <h4>Follow</h4>
+        <div class="social-links">
+          <a href="<%= data.social.github %>" target="_blank"><i class="fab fa-github"></i></a>
+          <a href="<%= data.social.linkedin %>" target="_blank"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 <%= data.name %>. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/js/script.js"></script>
+</body>
+</html>

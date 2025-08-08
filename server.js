@@ -30,6 +30,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// Locals for language toggle (compute matching FR/EN paths)
+app.use((req, res, next) => {
+  const isEn = req.path.startsWith('/en');
+  const basePath = isEn ? (req.path.replace(/^\/en/, '') || '/') : req.path;
+  res.locals.currentPath = req.path;
+  res.locals.frPath = isEn ? (basePath || '/') : basePath;
+  res.locals.enPath = isEn ? req.path : (basePath === '/' ? '/en' : '/en' + basePath);
+  next();
+});
+
 // Données du portfolio
 const portfolioData = {
   name: "Mathias Legrand",
@@ -104,6 +114,14 @@ const portfolioData = {
 // Ordonner les compétences par niveau décroissant (puis par nom pour stabilité)
 portfolioData.skills.sort((a, b) => (b.level - a.level) || a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
 
+// Variante EN des données (titre/description en anglais)
+const portfolioDataEn = {
+  ...portfolioData,
+  title: "DevOps & Python Developer",
+  description: "Passionate developer with 2+ years of experience in infrastructure operations and Python development. Specialized in automation, containers, CI/CD, DevOps, networking, and service recovery.",
+  location: "Paris, France"
+};
+
 // Routes
 app.get('/', (req, res) => {
   res.render('index', { data: portfolioData });
@@ -130,6 +148,32 @@ app.get('/cv', (req, res) => {
 app.get('/faq', (req, res) => {
   const embed = req.query.embed === '1';
   res.render('faq', { data: portfolioData, embed });
+});
+
+// English pages
+app.get('/en', (req, res) => {
+  res.render('en/index', { data: portfolioDataEn });
+});
+
+app.get('/en/about', (req, res) => {
+  res.render('en/about', { data: portfolioDataEn });
+});
+
+app.get('/en/projects', (req, res) => {
+  res.render('en/projects', { data: portfolioDataEn });
+});
+
+app.get('/en/contact', (req, res) => {
+  res.render('en/contact', { data: portfolioDataEn });
+});
+
+app.get('/en/cv', (req, res) => {
+  res.render('en/cv', { data: portfolioDataEn });
+});
+
+app.get('/en/faq', (req, res) => {
+  const embed = req.query.embed === '1';
+  res.render('en/faq', { data: portfolioDataEn, embed });
 });
 
 // Route pour traiter le formulaire de contact
@@ -352,6 +396,16 @@ app.get('/test-contact', (req, res) => {
   res.sendFile(path.join(__dirname, 'test-contact.html'));
 });
 
+// 404 pour les routes EN
+app.use('/en', (req, res) => {
+  res.status(404).render('en/error', {
+    data: portfolioDataEn,
+    status: 404,
+    message: 'Page not found',
+    details: 'The page you are looking for does not exist.'
+  });
+});
+
 // Middleware pour gérer les erreurs 404 (route non trouvée)
 app.use((req, res) => {
   res.status(404).render('error', {
@@ -380,7 +434,15 @@ app.use((err, req, res, next) => {
     504: "Délai d'attente dépassé",
   };
   const message = err.message || messages[status] || 'Une erreur est survenue';
-  res.status(status).render('error', { 
+  if (req.path && req.path.startsWith('/en')) {
+    return res.status(status).render('en/error', {
+      data: portfolioDataEn,
+      status,
+      message: message === messages[status] ? 'An error occurred' : message,
+      details: process.env.NODE_ENV !== 'production' ? err.stack : undefined
+    });
+  }
+  res.status(status).render('error', {
     data: portfolioData,
     status,
     message,

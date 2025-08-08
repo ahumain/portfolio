@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - <%= data.name %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <a href="/en"><%= data.name %></a>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="<%= frPath %>" class="nav-link">FR</a></li>
+        <li class="nav-item"><a href="/en" class="nav-link">Home</a></li>
+        <li class="nav-item"><a href="/en/about" class="nav-link active">About</a></li>
+        <li class="nav-item"><a href="/en/projects" class="nav-link">Projects</a></li>
+        <li class="nav-item"><a href="/en/contact" class="nav-link">Contact</a></li>
+        <li class="nav-item"><a href="/en/faq" class="nav-link">FAQ</a></li>
+        <li class="nav-item"><a href="/en/cv" class="nav-link">CV</a></li>
+      </ul>
+      <div class="hamburger"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
+    </div>
+  </nav>
+
+  <!-- About Section -->
+  <section class="about-hero">
+    <div class="container">
+      <h1>About me</h1>
+      <p>Discover my background and interests</p>
+    </div>
+  </section>
+
+  <section class="about-content">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text">
+          <h2>My story</h2>
+          <p><%= data.description %></p>
+          <p>Fascinated by technology from an early age, I discovered programming during my computer science studies. Since then, I’ve kept learning and honing modern backend and infrastructure skills.</p>
+          <p>I love building reliable systems with a focus on performance, UX, and maintainability. Collaboration and clear documentation are part of my workflow.</p>
+                    
+          <div class="stats">
+            <div class="stat-item">
+              <h3>2+</h3>
+              <p>Years of experience</p>
+            </div>
+            <div class="stat-item">
+              <h3>1+</h3>
+              <p>Delivered projects</p>
+            </div>
+            <div class="stat-item">
+              <h3>10+</h3>
+              <p>Technologies mastered</p>
+            </div>
+          </div>
+        </div>
+        <div class="about-image">
+          <img src="/images/about-me.jpg" alt="About me" onerror="this.src='/images/placeholder-profile.jpg'">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section class="skills">
+    <div class="container">
+      <h2>My skills</h2>
+      <div class="skills-categories">
+        <div class="skill-category">
+          <h3><i class="fas fa-chart-line"></i> Observability</h3>
+          <div class="skills-list">
+            <span class="skill-tag">Zabbix</span>
+            <span class="skill-tag">Grafana</span>
+            <span class="skill-tag">Alerting</span>
+            <span class="skill-tag">Dashboards</span>
+          </div>
+        </div>
+        <div class="skill-category">
+          <h3><i class="fas fa-cogs"></i> DevOps & Infra</h3>
+          <div class="skills-list">
+            <span class="skill-tag">Docker</span>
+            <span class="skill-tag">Kubernetes</span>
+            <span class="skill-tag">CI/CD</span>
+            <span class="skill-tag">Git</span>
+            <span class="skill-tag">Linux</span>
+            <span class="skill-tag">Terraform</span>
+            <span class="skill-tag">Puppet</span>
+            <span class="skill-tag">Shell scripting</span>
+            <span class="skill-tag">Backups</span>
+          </div>
+        </div>
+        <div class="skill-category">
+          <h3><i class="fas fa-code"></i> Languages & Backend</h3>
+          <div class="skills-list">
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">REST</span>
+            <span class="skill-tag">Automation</span>
+          </div>
+        </div>
+        <div class="skill-category">
+          <h3><i class="fas fa-shield-alt"></i> Security & IAM</h3>
+          <div class="skills-list">
+            <span class="skill-tag">Keycloak</span>
+            <span class="skill-tag">TLS/SSL</span>
+            <span class="skill-tag">RBAC</span>
+            <span class="skill-tag">Cloudflare</span>
+            <span class="skill-tag">Hardening</span>
+          </div>
+        </div>
+        <div class="skill-category">
+          <h3><i class="fas fa-network-wired"></i> Networks & Systems</h3>
+          <div class="skills-list">
+            <span class="skill-tag">Networking</span>
+            <span class="skill-tag">DNS</span>
+            <span class="skill-tag">Proxy / Reverse proxy</span>
+            <span class="skill-tag">GitLab CI/GitHub Actions</span>
+            <span class="skill-tag">System monitoring</span>
+          </div>
+        </div>
+        <div class="skill-category">
+          <h3><i class="fas fa-cloud"></i> Virtualization & Cloud</h3>
+          <div class="skills-list">
+            <span class="skill-tag">Nutanix AHV</span>
+            <span class="skill-tag">OVH</span>
+            <span class="skill-tag">AWS</span>
+            <span class="skill-tag">Vmware</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Timeline -->
+  <section class="timeline">
+    <div class="container">
+      <h2>My path</h2>
+      <div class="timeline-container">
+        <div class="timeline-item">
+          <div class="timeline-date">2022 - 2024</div>
+          <div class="timeline-content">
+            <h3>DevOps Technician</h3>
+            <h4>KEENTON SAS (Full-time)</h4>
+            <p>Managed self-hosted cloud infrastructure, observability (Zabbix, Grafana), incident response, Python Zabbix addons, CI/CD, containerization, and backups.</p>
+            <ul>
+              <li>Supervision setup and tuning (dashboards, alerting, SLA)</li>
+              <li>Python and Shell automation (internal tooling, integrations)</li>
+              <li>Docker/Kubernetes, Git, CI/CD pipelines</li>
+              <li>Nutanix AHV, networking and security (proxy, TLS)</li>
+              <li>Access and identity management (Keycloak)</li>
+              <li>Documentation and knowledge sharing (Wiki, internal training)</li>
+              <li>Configuration management (Terraform)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">2019 - Present</div>
+          <div class="timeline-content">
+            <h3>Education & Homelab</h3>
+            <h4>Self-learning</h4>
+            <p>Strengthened Linux, networking, and Python foundations. Built a homelab (Docker, Python, config management) and personal projects.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3><%= data.name %></h3>
+        <p><%= data.title %></p>
+      </div>
+      <div class="footer-section">
+        <h4>Contact</h4>
+        <p><i class="fas fa-envelope"></i> <%= data.email %></p>
+        <p><i class="fas fa-phone"></i> <%= data.phone %></p>
+        <p><i class="fas fa-map-marker-alt"></i> <%= data.location %></p>
+      </div>
+      <div class="footer-section">
+        <h4>Follow</h4>
+        <div class="social-links">
+          <a href="<%= data.social.github %>" target="_blank"><i class="fab fa-github"></i></a>
+          <a href="<%= data.social.linkedin %>" target="_blank"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 <%= data.name %>. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/js/script.js"></script>
+</body>
+</html>
