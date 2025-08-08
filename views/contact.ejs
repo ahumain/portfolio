@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - <%= data.name %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="/"><%= data.name %></a>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/about" class="nav-link">À propos</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/projects" class="nav-link">Projets</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/contact" class="nav-link active">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/faq" class="nav-link">FAQ</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/cv" class="nav-link">CV</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contact Hero -->
+    <section class="contact-hero">
+        <div class="container">
+            <h1>Contactez-moi</h1>
+            <p>Discutons de votre prochain projet</p>
+        </div>
+    </section>
+
+    
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-grid">
+                <!-- Contact Info -->
+                <div class="contact-info">
+                    <h2>Restons en contact</h2>
+                    <p>Je suis toujours intéressé par de nouveaux défis et opportunités. N'hésitez pas à me contacter !</p>
+                    
+                    <div class="contact-items">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-content">
+                                <h3>Email</h3>
+                                <p><%= data.email %></p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="contact-content">
+                                <h3>Téléphone</h3>
+                                <p><%= data.phone %></p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="contact-content">
+                                <h3>Localisation</h3>
+                                <p><%= data.location %></p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="contact-content">
+                                <h3>Disponibilité</h3>
+                                <p>Lun - Ven: 9h - 18h</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="social-section">
+                        <h3>Suivez-moi</h3>
+                        <div class="social-links">
+                            <a href="<%= data.social.github %>" target="_blank" class="social-link">
+                                <i class="fab fa-github"></i>
+                                <span>GitHub</span>
+                            </a>
+                            <a href="<%= data.social.linkedin %>" target="_blank" class="social-link">
+                                <i class="fab fa-linkedin"></i>
+                                <span>LinkedIn</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="contact-form-container">
+                    <h2>Envoyez-moi un message</h2>
+                    <form id="contactForm" class="contact-form">
+                        <div class="form-group">
+                            <label for="name">Nom complet *</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subject">Sujet</label>
+                            <input type="text" id="subject" name="subject">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Message *</label>
+                            <textarea id="message" name="message" rows="6" required placeholder="Décrivez votre projet ou votre demande..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            Envoyer le message
+                        </button>
+                    </form>
+                    
+                    <div id="formMessage" class="form-message"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section via iframe (moved to bottom) -->
+    <section class="faq-section">
+        <div class="container">
+            <div class="faq-embed-wrapper" style="position:relative;">
+                <iframe src="/faq?embed=1" title="FAQ" id="faqFrame" style="width:100%; border:0; border-radius:8px; min-height:650px; background:#fff;" loading="lazy"></iframe>
+                <noscript>
+                    <p>La FAQ nécessite JavaScript pour être affichée ici. Vous pouvez la consulter directement sur <a href="/faq">la page FAQ</a>.</p>
+                </noscript>
+            </div>
+            <p class="text-muted" style="margin-top:10px; text-align:center;">
+                Problème d’affichage ? Ouvrir la FAQ dans un <a href="/faq" target="_blank" rel="noopener">nouvel onglet</a>.
+            </p>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3><%= data.name %></h3>
+                <p><%= data.title %></p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p><i class="fas fa-envelope"></i> <%= data.email %></p>
+                <p><i class="fas fa-phone"></i> <%= data.phone %></p>
+                <p><i class="fas fa-map-marker-alt"></i> <%= data.location %></p>
+            </div>
+            <div class="footer-section">
+                <h4>Suivez-moi</h4>
+                <div class="social-links">
+                    <a href="<%= data.social.github %>" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="<%= data.social.linkedin %>" target="_blank"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 <%= data.name %>. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="/js/script.js"></script>
+</body>
+</html>

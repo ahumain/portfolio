@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Formulaire de Contact</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #3b82f6; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #2563eb; }
+        .message { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test du Formulaire de Contact</h1>
+    <p>Utilisez ce formulaire pour tester l'envoi d'emails sans passer par l'interface complète.</p>
+    
+    <form id="testForm">
+        <div class="form-group">
+            <label for="name">Nom complet *</label>
+            <input type="text" id="name" name="name" value="John Doe" required>
+        </div>
+        
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" value="john.doe@example.com" required>
+                        </div>        <div class="form-group">
+            <label for="subject">Sujet</label>
+            <input type="text" id="subject" name="subject" value="Test du formulaire de contact">
+        </div>
+        
+        <div class="form-group">
+            <label for="message">Message *</label>
+            <textarea id="message" name="message" rows="4" required>Ceci est un message de test pour vérifier que le système d'envoi d'emails fonctionne correctement. 
+
+Merci de confirmer la réception de ce message.</textarea>
+        </div>
+        
+        <button type="submit">Envoyer le message de test</button>
+    </form>
+    
+    <div id="result"></div>
+    
+    <hr style="margin: 30px 0;">
+    
+    <h2>🔧 Test de Configuration</h2>
+    <button onclick="testEmailConfig()">Tester la configuration email</button>
+    <div id="configResult"></div>
+    
+    <hr style="margin: 30px 0;">
+    
+    <h2>📖 Instructions</h2>
+    <ol>
+        <li><strong>Configurez votre email OVH</strong> dans le fichier <code>.env</code></li>
+        <li><strong>Utilisez votre email complet</strong> : <code>nom@votre-domaine.com</code></li>
+        <li><strong>Testez la configuration</strong> avec le bouton ci-dessus</li>
+        <li><strong>Envoyez un message de test</strong> avec le formulaire</li>
+        <li><strong>Vérifiez vos emails</strong> (vous et le destinataire devriez recevoir un email)</li>
+    </ol>
+    
+    <p><strong>Note :</strong> Ce fichier est uniquement pour les tests en développement. Supprimez-le avant le déploiement en production.</p>
+    <p><strong>Configuration :</strong> Le système utilise <code>ssl0.ovh.net</code> sur le port 587 pour OVH.</p>
+
+    <script>
+        // Test du formulaire
+        document.getElementById('testForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            const resultDiv = document.getElementById('result');
+            
+            const button = this.querySelector('button');
+            const originalText = button.textContent;
+            button.textContent = 'Envoi en cours...';
+            button.disabled = true;
+            
+            try {
+                const response = await fetch('/contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    resultDiv.innerHTML = `<div class="message success">✅ ${result.message}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="message error">❌ ${result.message}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="message error">❌ Erreur: ${error.message}</div>`;
+            } finally {
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        });
+        
+        // Test de la configuration
+        async function testEmailConfig() {
+            const button = event.target;
+            const resultDiv = document.getElementById('configResult');
+            
+            button.textContent = 'Test en cours...';
+            button.disabled = true;
+            
+            try {
+                const response = await fetch('/test-email');
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="message success">
+                            ✅ ${result.message}<br>
+                            <small>Service: ${result.config.service}, User: ${result.config.user}</small>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="message error">❌ ${result.message}<br><small>${result.error}</small></div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="message error">❌ Erreur: ${error.message}</div>`;
+            } finally {
+                button.textContent = 'Tester la configuration email';
+                button.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

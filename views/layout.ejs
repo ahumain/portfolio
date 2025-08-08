@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || 'Portfolio' %> - <%= data.name %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="/"><%= data.name %></a>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/about" class="nav-link">À propos</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/projects" class="nav-link">Projets</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/contact" class="nav-link">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/faq" class="nav-link">FAQ</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/cv" class="nav-link">CV</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main class="main-content">
+        <%- body %>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3><%= data.name %></h3>
+                <p><%= data.title %></p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p><i class="fas fa-envelope"></i> <%= data.email %></p>
+                <p><i class="fas fa-phone"></i> <%= data.phone %></p>
+                <p><i class="fas fa-map-marker-alt"></i> <%= data.location %></p>
+            </div>
+            <div class="footer-section">
+                <h4>Suivez-moi</h4>
+                <div class="social-links">
+                    <a href="<%= data.social.github %>" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="<%= data.social.linkedin %>" target="_blank"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 <%= data.name %>. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="/js/script.js"></script>
+</body>
+</html>

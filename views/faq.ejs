@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ - <%= data.name %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { background: var(--bg-primary); }
+    .faq-page { padding: 90px 0 40px; }
+    .faq-header { text-align:center; margin-bottom: 24px; }
+    .faq-header h1 { font-size: 2rem; }
+  </style>
+</head>
+<body>
+  <% if (!embed) { %>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo"><a href="/"> <%= data.name %></a></div>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="/" class="nav-link">Accueil</a></li>
+        <li class="nav-item"><a href="/about" class="nav-link">À propos</a></li>
+  <li class="nav-item"><a href="/projects" class="nav-link">Projets</a></li>
+  <li class="nav-item"><a href="/contact" class="nav-link">Contact</a></li>
+  <li class="nav-item"><a href="/faq" class="nav-link active">FAQ</a></li>
+        <li class="nav-item"><a href="/cv" class="nav-link">CV</a></li>
+      </ul>
+      <div class="hamburger"><span class="bar"></span><span class="bar"></span><span class="bar"></span></div>
+    </div>
+  </nav>
+  <% } %>
+
+  <main class="faq-page">
+    <div class="container">
+      <div class="faq-header">
+        <h1>Questions fréquentes</h1>
+        <p class="text-muted">Infos rapides sur réponses, devis, confidentialité et prestations</p>
+      </div>
+
+      <section class="faq-section" style="padding:0">
+        <div class="faq-grid">
+          <div class="faq-item">
+            <h3>Quel est votre délai de réponse ?</h3>
+            <p>Je réponds généralement sous 24–48h les jours ouvrés. Pour les urgences (incident prod), précisez-le dans le sujet du message.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Comment se déroule un devis ?</h3>
+            <p>Nous clarifions le besoin (30 min d’échange), j’envoie un chiffrage détaillé (périmètre, livrables, planning, TJM ou forfait) et les prérequis techniques.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Confidentialité et NDA ?</h3>
+            <p>Je peux signer un NDA. Les informations sensibles (accès, configs) sont traitées de manière sécurisée et ne sont pas exposées publiquement.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Technos et périmètre d’intervention</h3>
+            <p>DevOps/Infra (Docker, Kubernetes, CI/CD, Linux), Observabilité (Zabbix, Grafana), Sécurité & IAM (Keycloak, TLS/SSL, RBAC) et Automatisation (Python, Shell) — liste non exhaustive selon vos besoins.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Maintenance et support</h3>
+            <p>J’assure la maintenance, le monitoring et les mises à jour. Des options de support (heures de dispo, SLA) sont proposées selon vos besoins.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Délais et disponibilité</h3>
+            <p>Disponibilité adaptable selon la charge. Un planning prévisionnel est fourni au devis, avec jalons et points de suivi réguliers.</p>
+          </div>
+          <div class="faq-item">
+            <h3>Modalités de facturation</h3>
+            <p>Facturation au forfait ou au TJM, avec devis et bon de commande. Factures et mentions légales fournies. Acompte possible selon le projet.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <% if (!embed) { %>
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section"><h3><%= data.name %></h3><p><%= data.title %></p></div>
+  <div class="footer-section"><h4>Contact</h4><p><i class="fas fa-envelope"></i> <%= data.email %></p><p><i class="fas fa-phone"></i> <%= data.phone %></p><p><i class="fas fa-map-marker-alt"></i> <%= data.location %></p></div>
+      <div class="footer-section"><h4>Suivez-moi</h4><div class="social-links"><a href="<%= data.social.github %>" target="_blank"><i class="fab fa-github"></i></a><a href="<%= data.social.linkedin %>" target="_blank"><i class="fab fa-linkedin"></i></a></div></div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2025 <%= data.name %>. Tous droits réservés.</p></div>
+  </footer>
+  <% } %>
+
+  <script src="/js/script.js"></script>
+  <% if (embed) { %>
+  <style>
+    .faq-page { padding: 10px 0 0; }
+    body { background: transparent; }
+  </style>
+  <% } %>
+</body>
+</html>

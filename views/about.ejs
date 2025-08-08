@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>À propos - <%= data.name %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="/"><%= data.name %></a>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/about" class="nav-link active">À propos</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/projects" class="nav-link">Projets</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/contact" class="nav-link">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/faq" class="nav-link">FAQ</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/cv" class="nav-link">CV</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- About Section -->
+    <section class="about-hero">
+        <div class="container">
+            <h1>À propos de moi</h1>
+            <p>Découvrez mon parcours et mes passions</p>
+        </div>
+    </section>
+
+    <section class="about-content">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-text">
+                    <h2>Mon histoire</h2>
+                    <p><%= data.description %></p>
+                    <p>Passionné par la technologie depuis mon plus jeune âge, j'ai découvert la programmation durant mes études en informatique. Depuis, je n'ai cessé d'apprendre et de me perfectionner dans les technologies web modernes.</p>
+                    <p>J'aime créer des solutions élégantes et efficaces, en mettant l'accent sur l'expérience utilisateur et la performance. Mon approche privilégie la collaboration et l'innovation continue.</p>
+                    
+                    <div class="stats">
+                        <div class="stat-item">
+                            <h3>2+</h3>
+                            <p>Années d'expérience</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>1+</h3>
+                            <p>Projets réalisés</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>10+</h3>
+                            <p>Technologies maîtrisées</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="/images/about-me.jpg" alt="À propos de moi" onerror="this.src='/images/placeholder-profile.jpg'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section class="skills">
+        <div class="container">
+            <h2>Mes compétences</h2>
+            <div class="skills-categories">
+                <div class="skill-category">
+                    <h3><i class="fas fa-chart-line"></i> Observabilité</h3>
+                    <div class="skills-list">
+                        <span class="skill-tag">Zabbix</span>
+                        <span class="skill-tag">Grafana</span>
+                        <span class="skill-tag">Alerting</span>
+                        <span class="skill-tag">Dashboards</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3><i class="fas fa-cogs"></i> DevOps & Infra</h3>
+                    <div class="skills-list">
+                        <span class="skill-tag">Docker</span>
+                        <span class="skill-tag">Kubernetes</span>
+                        <span class="skill-tag">CI/CD</span>
+                        <span class="skill-tag">Git</span>
+                        <span class="skill-tag">Linux</span>
+                        <span class="skill-tag">Terraform</span>
+                        <span class="skill-tag">Puppet</span>
+                        <span class="skill-tag">Shell scripting</span>
+                        <span class="skill-tag">Backups</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3><i class="fas fa-code"></i> Langages & Backend</h3>
+                    <div class="skills-list">
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">REST</span>
+                        <span class="skill-tag">Automatisation</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3><i class="fas fa-shield-alt"></i> Sécurité & IAM</h3>
+                    <div class="skills-list">
+                        <span class="skill-tag">Keycloak</span>
+                        <span class="skill-tag">TLS/SSL</span>
+                        <span class="skill-tag">RBAC</span>
+                        <span class="skill-tag">Cloudflare</span>
+                        <span class="skill-tag">Hardening</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3><i class="fas fa-network-wired"></i> Réseaux & Systèmes</h3>
+                    <div class="skills-list">
+                        <span class="skill-tag">Réseaux</span>
+                        <span class="skill-tag">DNS</span>
+                        <span class="skill-tag">Proxy / Reverse proxy</span>
+                        <span class="skill-tag">GitLab CI/GitHub Actions</span>
+                        <span class="skill-tag">Monitoring systèmes</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3><i class="fas fa-cloud"></i> Virtualisation & Cloud</h3>
+                    <div class="skills-list">
+                        <span class="skill-tag">Nutanix AHV</span>
+                        <span class="skill-tag">OVH</span>
+                        <span class="skill-tag">AWS</span>
+                        <span class="skill-tag">Vmware</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Timeline -->
+    <section class="timeline">
+        <div class="container">
+            <h2>Mon parcours</h2>
+            <div class="timeline-container">
+                <div class="timeline-item">
+                    <div class="timeline-date">2022 - 2024</div>
+                    <div class="timeline-content">
+                        <h3>Technicien DevOps</h3>
+                        <h4>KEENTON SAS (CDI)</h4>
+                        <p>Gestion d'une infrastructure cloud auto‑hébergée, supervision et observabilité (Zabbix, Grafana), gestion des incidents, développement d'addons Zabbix en Python, CI/CD, conteneurisation et sauvegardes.</p>
+                        <ul>
+                            <li>Mise en place et tuning de la supervision (tableaux de bord, alerting, SLA)</li>
+                            <li>Automatisation en Python et Shell (outils internes, intégrations)</li>
+                            <li>Docker/Kubernetes, Git, pipelines CI/CD</li>
+                            <li>Virtualisation Nutanix AHV, réseau et sécurité (proxy, TLS)</li>
+                            <li>Gestion des accès et identités (Keycloak)</li>
+                            <li>Documentation et partage de connaissances (Wiki, formations internes)</li>
+                            <li>Gestion de la configuration (Terraform)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2019 - Présent</div>
+                    <div class="timeline-content">
+                        <h3>Formation & Homelab</h3>
+                        <h4>Auto‑formation</h4>
+                        <p>Renforcement des bases en Linux, réseaux et développement Python. Mise en place d'un homelab (Docker, Python, Gestion de configuration) et réalisation de projets personnels.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3><%= data.name %></h3>
+                <p><%= data.title %></p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p><i class="fas fa-envelope"></i> <%= data.email %></p>
+                <p><i class="fas fa-phone"></i> <%= data.phone %></p>
+                <p><i class="fas fa-map-marker-alt"></i> <%= data.location %></p>
+            </div>
+            <div class="footer-section">
+                <h4>Suivez-moi</h4>
+                <div class="social-links">
+                    <a href="<%= data.social.github %>" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="<%= data.social.linkedin %>" target="_blank"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 <%= data.name %>. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="/js/script.js"></script>
+</body>
+</html>
