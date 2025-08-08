@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const SITE_URL = (process.env.SITE_URL || '').replace(/\/$/, '') || `http://localhost:${PORT}`;
 
 // Configuration email
 const EMAIL_CONFIG = {
@@ -37,6 +38,7 @@ app.use((req, res, next) => {
   res.locals.currentPath = req.path;
   res.locals.frPath = isEn ? (basePath || '/') : basePath;
   res.locals.enPath = isEn ? req.path : (basePath === '/' ? '/en' : '/en' + basePath);
+  res.locals.siteUrl = SITE_URL;
   next();
 });
 
@@ -174,6 +176,59 @@ app.get('/en/cv', (req, res) => {
 app.get('/en/faq', (req, res) => {
   const embed = req.query.embed === '1';
   res.render('en/faq', { data: portfolioDataEn, embed });
+});
+
+// SEO: robots.txt
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain').send([
+    'User-agent: *',
+    'Allow: /',
+    'Disallow: /test-email',
+    'Disallow: /test-contact',
+    `Sitemap: ${SITE_URL}/sitemap.xml`
+  ].join('\n'));
+});
+
+// SEO: sitemap.xml with FR/EN and hreflang alternates
+app.get('/sitemap.xml', (req, res) => {
+  const frRoutes = ['/', '/about', '/projects', '/contact', '/cv', '/faq'];
+  const enRoutes = ['/en', '/en/about', '/en/projects', '/en/contact', '/en/cv', '/en/faq'];
+  const lastmod = new Date().toISOString();
+
+  const xhtmlNs = 'xmlns:xhtml="http://www.w3.org/1999/xhtml"';
+  const urls = [];
+
+  // Pair FR<->EN alternates
+  for (let i = 0; i < frRoutes.length; i++) {
+    const fr = frRoutes[i];
+    const en = enRoutes[i];
+    urls.push(`
+    <url>
+      <loc>${SITE_URL}${fr}</loc>
+      <lastmod>${lastmod}</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.8</priority>
+      <xhtml:link rel="alternate" hreflang="fr" href="${SITE_URL}${fr}" />
+      <xhtml:link rel="alternate" hreflang="en" href="${SITE_URL}${en}" />
+      <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}${fr}" />
+    </url>`);
+    urls.push(`
+    <url>
+      <loc>${SITE_URL}${en}</loc>
+      <lastmod>${lastmod}</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.8</priority>
+      <xhtml:link rel="alternate" hreflang="fr" href="${SITE_URL}${fr}" />
+      <xhtml:link rel="alternate" hreflang="en" href="${SITE_URL}${en}" />
+      <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}${fr}" />
+    </url>`);
+  }
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" ${xhtmlNs}>
+    ${urls.join('\n')}
+  </urlset>`;
+  res.type('application/xml').send(xml);
 });
 
 // Route pour traiter le formulaire de contact
