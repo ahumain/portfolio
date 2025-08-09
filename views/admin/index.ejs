@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="icon" href="/images/placeholder-profile.svg">
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body class="admin-body">
+  <aside class="admin-sidebar">
+    <div class="brand">Dashboard</div>
+    <nav>
+      <a href="#profile" data-target="profile" class="nav-link active">Profil</a>
+      <a href="#social" data-target="social" class="nav-link">Réseaux</a>
+      <a href="#skills" data-target="skills" class="nav-link">Compétences</a>
+  <a href="#categories" data-target="categories" class="nav-link">Catégories</a>
+      <a href="#projects" data-target="projects" class="nav-link">Projets</a>
+  <a href="#experiences" data-target="experiences" class="nav-link">Parcours</a>
+    </nav>
+    <div class="admin-meta">
+      <small><%= siteUrl %></small>
+    </div>
+  </aside>
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <div>
+        <h1>Administration</h1>
+        <p class="subtitle">Gérez le contenu du portfolio</p>
+      </div>
+      <div class="admin-actions" style="display:flex;gap:8px;align-items:center;">
+        <a class="btn" href="/" target="_blank">Voir le site ↗︎</a>
+        <form method="post" action="/admin/reset-password" style="display:inline-block">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="btn" type="submit" title="Envoyer un lien de réinitialisation par email">Régénérer le mot de passe</button>
+        </form>
+        <form method="post" action="/logout" style="display:inline-block">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="btn danger" type="submit">Se déconnecter</button>
+        </form>
+      </div>
+    </header>
+    <section class="admin-content">
+      <div class="cards-grid">
+        <div class="card" data-section="profile">
+          <h2>Profil</h2>
+          <form class="form" method="post" action="<%= currentPath %>/profile">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="grid-2">
+              <label>Nom<input name="name" value="<%= data.profile.name %>" required></label>
+              <label>Email<input name="email" value="<%= data.profile.email %>" required></label>
+              <label>Téléphone<input name="phone" value="<%= data.profile.phone %>"></label>
+              <label>Localisation<input name="location" value="<%= data.profile.location %>"></label>
+              <label>Année de début (exp.)<input name="experienceStartYear" type="number" min="1970" max="2100" value="<%= data.profile.experienceStartYear %>"></label>
+            </div>
+            <div class="grid-2">
+              <label>Titre FR<input name="frTitle" value="<%= data.profile.fr.title %>" required></label>
+              <label>Titre EN<input name="enTitle" value="<%= data.profile.en.title %>" required></label>
+            </div>
+            <div class="grid-2">
+              <label>Description FR<textarea name="frDescription" rows="4"><%= data.profile.fr.description %></textarea></label>
+              <label>Description EN<textarea name="enDescription" rows="4"><%= data.profile.en.description %></textarea></label>
+            </div>
+            <div class="actions"><button class="btn primary" type="submit">Enregistrer</button></div>
+          </form>
+        </div>
+        <div class="card hidden" data-section="social">
+          <h2>Réseaux</h2>
+          <form class="form" method="post" action="<%= currentPath %>/social">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="grid-2">
+              <label>GitHub<input name="github" value="<%= data.social.github %>"></label>
+              <label>LinkedIn<input name="linkedin" value="<%= data.social.linkedin %>"></label>
+            </div>
+            <div class="actions"><button class="btn primary" type="submit">Enregistrer</button></div>
+          </form>
+        </div>
+        <div class="card hidden" data-section="skills">
+          <h2>Compétences</h2>
+          <form class="form inline" method="post" action="<%= currentPath %>/skills/add">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input name="name" placeholder="Nom" required>
+            <input name="level" type="number" step="1" value="50" placeholder="%" style="width:120px;">
+            <button class="btn" type="submit">Ajouter</button>
+          </form>
+          <table class="admin-table">
+            <thead>
+              <tr><th>Nom</th><th style="width:140px">Niveau</th><th style="width:260px">Catégories</th><th style="width:140px">Actions</th></tr>
+            </thead>
+            <tbody>
+              <% data.skills.forEach(s => { %>
+                <tr>
+                  <td>
+                    <form class="form inline" method="post" action="<%= currentPath %>/skills/<%= s.id %>/update" style="display:flex;gap:6px;align-items:center;">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <input name="name" value="<%= s.name %>" required>
+                  </td>
+                  <td>
+                      <input name="level" type="number" step="1" value="<%= s.level %>" placeholder="%">
+                    </form>
+                  </td>
+                  <td>
+                    <form class="form inline" method="post" action="<%= currentPath %>/skills/<%= s.id %>/categories" style="display:flex;gap:6px;align-items:center;">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <div class="multi-dd" data-dd>
+                        <input type="hidden" name="categoryIds" value="<%= (s.categoryIds||[]).join(',') %>">
+                        <button type="button" class="btn" data-dd-toggle>
+                          Catégories (<span data-dd-count><%= (s.categoryIds||[]).length %></span>)
+                        </button>
+                        <div class="dd-menu hidden" data-dd-menu>
+                          <% (data.categories||[]).forEach(c => { %>
+                            <label class="dd-item" style="display:block;padding:4px 8px;cursor:pointer;">
+                              <input type="checkbox" value="<%= c.id %>" <%= (s.categoryIds||[]).includes(c.id) ? 'checked' : '' %>>
+                              <span style="margin-left:6px;"><%= c.name %></span>
+                            </label>
+                          <% }) %>
+                        </div>
+                      </div>
+                      <button class="btn" type="submit">Affecter</button>
+                    </form>
+                  </td>
+                  <td style="white-space:nowrap;display:flex;gap:6px;align-items:center;">
+                    <form class="form" method="post" action="<%= currentPath %>/skills/<%= s.id %>/update">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <input type="hidden" name="name" value="<%= s.name %>">
+                      <input type="hidden" name="level" value="<%= s.level %>">
+                      <button class="btn" type="submit">Sauver</button>
+                    </form>
+                    <form method="post" action="<%= currentPath %>/skills/<%= s.id %>/delete">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button class="btn danger" type="submit">Supprimer</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+        <div class="card hidden" data-section="categories">
+          <h2>Catégories de compétences</h2>
+          <form class="form inline" method="post" action="<%= currentPath %>/categories/add">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input name="name" placeholder="Nom" required>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <input name="icon" placeholder="Icône FontAwesome (ex: fa-code)">
+              <div class="icon-dd" data-icon-dd>
+                <button type="button" class="btn" data-icon-toggle>Icône</button>
+                <div class="dd-menu hidden" data-icon-menu>
+                  <% const iconOptions = ['fa-code','fa-database','fa-server','fa-cloud','fa-network-wired','fa-cubes','fa-python','fa-js','fa-docker','fa-gear','fa-shield-halved','fa-diagram-project']; %>
+                  <% iconOptions.forEach(ic => { %>
+                    <div class="icon-item" data-icon-val="<%= ic %>"><i class="fas <%= ic %>"></i> <span><%= ic %></span></div>
+                  <% }) %>
+                </div>
+              </div>
+            </div>
+            <input name="position" type="number" value="0" style="width:100px;" title="Ordre">
+            <button class="btn" type="submit">Ajouter</button>
+          </form>
+          <table class="admin-table">
+            <thead>
+              <tr><th>Nom</th><th>Icône</th><th style="width:120px">Position</th><th style="width:140px">Actions</th></tr>
+            </thead>
+            <tbody>
+              <% (data.categories||[]).forEach(c => { %>
+                <tr>
+                  <td>
+                    <form class="form inline" method="post" action="<%= currentPath %>/categories/<%= c.id %>/update" style="display:flex;gap:6px;align-items:center;">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <input name="name" value="<%= c.name %>" required>
+                  </td>
+                  <td>
+                      <div style="display:flex;gap:6px;align-items:center;">
+                        <input name="icon" value="<%= c.icon || '' %>" placeholder="Icône">
+                        <div class="icon-dd" data-icon-dd>
+                          <button type="button" class="btn" data-icon-toggle>Icône</button>
+                          <div class="dd-menu hidden" data-icon-menu>
+                            <% iconOptions.forEach(ic => { %>
+                              <div class="icon-item" data-icon-val="<%= ic %>"><i class="fas <%= ic %>"></i> <span><%= ic %></span></div>
+                            <% }) %>
+                          </div>
+                        </div>
+                      </div>
+                  </td>
+                  <td>
+                      <input name="position" type="number" value="<%= c.position %>">
+                    </form>
+                  </td>
+                  <td style="white-space:nowrap;display:flex;gap:6px;align-items:center;">
+                    <form class="form" method="post" action="<%= currentPath %>/categories/<%= c.id %>/update">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <input type="hidden" name="name" value="<%= c.name %>">
+                      <input type="hidden" name="icon" value="<%= c.icon || '' %>">
+                      <input type="hidden" name="position" value="<%= c.position %>">
+                      <button class="btn" type="submit">Enregistrer</button>
+                    </form>
+                    <form method="post" action="<%= currentPath %>/categories/<%= c.id %>/delete">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button class="btn danger" type="submit">Supprimer</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+        <div class="card hidden" data-section="projects">
+          <h2>Projets</h2>
+          <form class="form" method="post" action="<%= currentPath %>/projects/save">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="grid-3">
+              <input name="id" placeholder="ID (vide pour créer)">
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <input name="image" placeholder="/images/placeholder-project.svg" data-img-input>
+                <img data-img-preview src="/images/placeholder-project.svg" alt="aperçu" style="width:100%;max-width:180px;height:100px;object-fit:cover;border:1px solid var(--border);border-radius:6px;">
+              </div>
+              <input name="technologies" placeholder="Tech (séparées par virgules)">
+            </div>
+            <div class="grid-2">
+              <input name="frTitle" placeholder="Titre FR" required>
+              <input name="enTitle" placeholder="Title EN" required>
+            </div>
+            <div class="grid-2">
+              <textarea name="frDescription" rows="3" placeholder="Description FR"></textarea>
+              <textarea name="enDescription" rows="3" placeholder="Description EN"></textarea>
+            </div>
+            <div class="actions"><button class="btn primary" type="submit">Enregistrer</button></div>
+          </form>
+          <table class="admin-table">
+            <thead>
+              <tr><th>Image</th><th>Technologies</th><th>Titre/Desc FR</th><th>Title/Desc EN</th><th style="width:140px">Actions</th></tr>
+            </thead>
+            <tbody>
+              <% data.projects.forEach(p => { %>
+                <tr>
+                  <td>
+                    <form class="form" method="post" action="<%= currentPath %>/projects/save" style="display:flex;gap:6px;align-items:center;">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <input type="hidden" name="id" value="<%= p.id %>">
+                      <input name="image" value="<%= p.image %>" placeholder="/images/placeholder-project.svg" data-img-input>
+                      <img data-img-preview src="<%= p.image || '/images/placeholder-project.svg' %>" alt="aperçu" style="width:80px;height:48px;object-fit:cover;border:1px solid var(--border);border-radius:6px;">
+                  </td>
+                  <td>
+                      <input name="technologies" value="<%= (p.technologies||[]).join(', ') %>" placeholder="Tech (séparées par virgules)">
+                  </td>
+                  <td>
+                      <input name="frTitle" value="<%= p.fr?.title || '' %>" placeholder="Titre FR" required>
+                      <textarea name="frDescription" rows="2" placeholder="Description FR"><%= p.fr?.description || '' %></textarea>
+                  </td>
+                  <td>
+                      <input name="enTitle" value="<%= p.en?.title || '' %>" placeholder="Title EN" required>
+                      <textarea name="enDescription" rows="2" placeholder="Description EN"><%= p.en?.description || '' %></textarea>
+                  </td>
+                  <td style="white-space:nowrap;display:flex;gap:6px;align-items:center;">
+                      <button class="btn" type="submit">Mettre à jour</button>
+                    </form>
+                    <form method="post" action="<%= currentPath %>/projects/<%= p.id %>/delete">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button class="btn danger" type="submit">Supprimer</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+  <div class="card hidden" data-section="experiences">
+          <h2>Parcours (Timeline)</h2>
+          <div class="admin-grid">
+            <div>
+              <h3>Ajouter une expérience</h3>
+              <form method="post" action="<%= currentPath %>/experiences/add">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <div class="form-row">
+                  <label>Année début</label>
+                  <input type="number" name="start_year" required>
+                </div>
+                <div class="form-row">
+                  <label>Année fin</label>
+                  <input type="number" name="end_year" placeholder="(optionnel)">
+                </div>
+                <div class="form-row"><label>Titre (FR)</label><input name="frTitle" required></div>
+                <div class="form-row"><label>Sous-titre (FR)</label><input name="frSubtitle"></div>
+                <div class="form-row"><label>Description (FR)</label><textarea name="frDescription" rows="4"></textarea></div>
+                <div class="form-row"><label>Title (EN)</label><input name="enTitle"></div>
+                <div class="form-row"><label>Subtitle (EN)</label><input name="enSubtitle"></div>
+                <div class="form-row"><label>Description (EN)</label><textarea name="enDescription" rows="4"></textarea></div>
+                <button type="submit" class="btn">Ajouter</button>
+              </form>
+            </div>
+            <div>
+              <h3>Liste</h3>
+              <table class="admin-table">
+                <thead><tr><th>Période</th><th>Titre</th><th></th></tr></thead>
+                <tbody>
+                  <% (data.experiences || []).forEach(exp => { %>
+                    <tr>
+                      <td style="vertical-align:top;white-space:nowrap"><%= exp.start_year %> - <%= exp.end_year || 'Présent' %></td>
+                      <td>
+                        <form method="post" action="<%= currentPath %>/experiences/<%= exp.id %>/update" style="display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:8px;align-items:start;">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <label>Début<input type="number" name="start_year" value="<%= exp.start_year %>" required></label>
+                          <label>Fin<input type="number" name="end_year" value="<%= exp.end_year || '' %>" placeholder="(optionnel)"></label>
+                          <label>Titre FR<input name="frTitle" value="<%= exp.title %>" required></label>
+                          <label>Sous-titre FR<input name="frSubtitle" value="<%= exp.subtitle || '' %>"></label>
+                          <label style="grid-column:1/-1">Description FR<textarea name="frDescription" rows="3"><%= exp.description || '' %></textarea></label>
+                          <label>Title EN<input name="enTitle" placeholder="Title EN"></label>
+                          <label>Subtitle EN<input name="enSubtitle" placeholder="Subtitle EN"></label>
+                          <label style="grid-column:1/-1">Description EN<textarea name="enDescription" rows="3" placeholder="Description EN"></textarea></label>
+                          <div class="actions" style="grid-column:1/-1;display:flex;gap:8px;justify-content:flex-end;">
+                            <button class="btn" type="submit">Mettre à jour</button>
+                          </div>
+                        </form>
+                      </td>
+                      <td style="text-align:right;vertical-align:top">
+                        <form method="post" action="<%= currentPath %>/experiences/<%= exp.id %>/delete" onsubmit="return confirm('Supprimer cette expérience ?')">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <button type="submit" class="btn danger">Supprimer</button>
+                        </form>
+                      </td>
+                    </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="toast" class="toast hidden"></div>
+  <script src="/js/admin.js" defer></script>
+</body>
+</html>

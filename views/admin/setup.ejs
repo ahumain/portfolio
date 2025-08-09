@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Créer un mot de passe</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body class="admin-body" style="align-items:center;justify-content:center">
+  <main class="card" style="max-width:420px;width:92%;margin:auto">
+    <h1 style="margin-top:0">Définir votre mot de passe</h1>
+    <% if (error) { %>
+      <div style="background:#3d0d13;color:#fecaca;padding:8px 10px;border-radius:6px;margin-bottom:8px">Lien invalide ou expiré</div>
+    <% } %>
+    <form class="form" method="post" action="/setup">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="token" value="<%= token %>">
+      <label>Nouveau mot de passe
+        <input name="password" type="password" minlength="8" autocomplete="new-password" required>
+      </label>
+      <div class="actions" style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+        <button class="btn primary" type="submit">Enregistrer</button>
+        <small style="color:#a9b1c7">Le lien expirera sous peu</small>
+      </div>
+    </form>
+  </main>
+</body>
+</html>

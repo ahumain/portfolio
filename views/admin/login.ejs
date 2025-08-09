@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Connexion Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body class="admin-body" style="align-items:center;justify-content:center">
+  <main class="card" style="max-width:420px;width:92%;margin:auto">
+    <h1 style="margin-top:0">Connexion</h1>
+    <% if (error) { %>
+      <div style="background:#3d0d13;color:#fecaca;padding:8px 10px;border-radius:6px;margin-bottom:8px">Identifiants invalides</div>
+    <% } %>
+    <% if (firstUserFlow && setupInfo) { %>
+      <div style="background:#0e152b;border:1px solid #1f2a4a;color:#e9ecf4;padding:8px 10px;border-radius:6px;margin-bottom:8px">
+        Nous avons envoyé un lien de configuration à <strong><%= setupInfo.email %></strong>.<br>
+        <a style="color:#5b8cff" href="<%= setupInfo.url %>">Ouvrir le lien de configuration</a>
+      </div>
+    <% } %>
+    <form class="form" method="post" action="/login">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="next" value="<%= next %>">
+      <label>Email
+        <input name="username" type="email" autocomplete="username" required>
+      </label>
+      <label>Mot de passe
+        <input name="password" type="password" autocomplete="current-password" required>
+      </label>
+      <div class="actions" style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+        <button class="btn primary" type="submit">Se connecter</button>
+        <small style="color:#a9b1c7">Accès restreint</small>
+      </div>
+    </form>
+  </main>
+</body>
+</html>

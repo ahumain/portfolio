@@ -30,14 +30,14 @@
 
   <!-- About Section -->
   <section class="about-hero">
-    <div class="container">
+    <div class="container container--fluid">
       <h1>About me</h1>
       <p>Discover my background and interests</p>
     </div>
   </section>
 
   <section class="about-content">
-    <div class="container">
+    <div class="container container--fluid">
       <div class="about-grid">
         <div class="about-text">
           <h2>My story</h2>
@@ -47,15 +47,15 @@
                     
           <div class="stats">
             <div class="stat-item">
-              <h3>2+</h3>
+              <h3><%= (data.stats?.years ?? 0) %>+</h3>
               <p>Years of experience</p>
             </div>
             <div class="stat-item">
-              <h3>1+</h3>
+              <h3><%= (data.stats?.projects ?? 0) %>+</h3>
               <p>Delivered projects</p>
             </div>
             <div class="stat-item">
-              <h3>10+</h3>
+              <h3><%= (data.stats?.skills ?? 0) %>+</h3>
               <p>Technologies mastered</p>
             </div>
           </div>
@@ -67,105 +67,55 @@
     </div>
   </section>
 
-  <!-- Skills Section -->
+  <!-- Skills Section (dynamic by theme) -->
   <section class="skills">
-    <div class="container">
+    <div class="container container--fluid">
       <h2>My skills</h2>
+      <% 
+  const categories = (data.categories || []).map(c => ({ title: c.name, icon: c.icon || 'fa-layer-group', items: (c.skills||[]) }));
+  const assigned = new Set(categories.flatMap(c => c.items.map(s => s.name)));
+  const others = (data.skills || []).filter(s => !assigned.has(s.name));
+      %>
       <div class="skills-categories">
-        <div class="skill-category">
-          <h3><i class="fas fa-chart-line"></i> Observability</h3>
-          <div class="skills-list">
-            <span class="skill-tag">Zabbix</span>
-            <span class="skill-tag">Grafana</span>
-            <span class="skill-tag">Alerting</span>
-            <span class="skill-tag">Dashboards</span>
+  <% categories.forEach(c => { if (c.items.length) { %>
+          <div class="skill-category">
+            <h3><i class="fas <%= c.icon %>"></i> <%= c.title %></h3>
+            <div class="skills-list">
+              <% c.items.forEach(s => { %>
+                <span class="skill-tag"><%= s.name %></span>
+              <% }); %>
+            </div>
           </div>
-        </div>
-        <div class="skill-category">
-          <h3><i class="fas fa-cogs"></i> DevOps & Infra</h3>
-          <div class="skills-list">
-            <span class="skill-tag">Docker</span>
-            <span class="skill-tag">Kubernetes</span>
-            <span class="skill-tag">CI/CD</span>
-            <span class="skill-tag">Git</span>
-            <span class="skill-tag">Linux</span>
-            <span class="skill-tag">Terraform</span>
-            <span class="skill-tag">Puppet</span>
-            <span class="skill-tag">Shell scripting</span>
-            <span class="skill-tag">Backups</span>
+        <% } }); %>
+        <% if (others.length) { %>
+          <div class="skill-category">
+            <h3><i class="fas fa-layer-group"></i> Other</h3>
+            <div class="skills-list">
+              <% others.forEach(s => { %>
+                <span class="skill-tag"><%= s.name %></span>
+              <% }); %>
+            </div>
           </div>
-        </div>
-        <div class="skill-category">
-          <h3><i class="fas fa-code"></i> Languages & Backend</h3>
-          <div class="skills-list">
-            <span class="skill-tag">Python</span>
-            <span class="skill-tag">REST</span>
-            <span class="skill-tag">Automation</span>
-          </div>
-        </div>
-        <div class="skill-category">
-          <h3><i class="fas fa-shield-alt"></i> Security & IAM</h3>
-          <div class="skills-list">
-            <span class="skill-tag">Keycloak</span>
-            <span class="skill-tag">TLS/SSL</span>
-            <span class="skill-tag">RBAC</span>
-            <span class="skill-tag">Cloudflare</span>
-            <span class="skill-tag">Hardening</span>
-          </div>
-        </div>
-        <div class="skill-category">
-          <h3><i class="fas fa-network-wired"></i> Networks & Systems</h3>
-          <div class="skills-list">
-            <span class="skill-tag">Networking</span>
-            <span class="skill-tag">DNS</span>
-            <span class="skill-tag">Proxy / Reverse proxy</span>
-            <span class="skill-tag">GitLab CI/GitHub Actions</span>
-            <span class="skill-tag">System monitoring</span>
-          </div>
-        </div>
-        <div class="skill-category">
-          <h3><i class="fas fa-cloud"></i> Virtualization & Cloud</h3>
-          <div class="skills-list">
-            <span class="skill-tag">Nutanix AHV</span>
-            <span class="skill-tag">OVH</span>
-            <span class="skill-tag">AWS</span>
-            <span class="skill-tag">Vmware</span>
-          </div>
-        </div>
+        <% } %>
       </div>
     </div>
   </section>
 
   <!-- Timeline -->
   <section class="timeline">
-    <div class="container">
+    <div class="container container--fluid">
       <h2>My path</h2>
       <div class="timeline-container">
-        <div class="timeline-item">
-          <div class="timeline-date">2022 - 2024</div>
-          <div class="timeline-content">
-            <h3>DevOps Technician</h3>
-            <h4>KEENTON SAS (Full-time)</h4>
-            <p>Managed self-hosted cloud infrastructure, observability (Zabbix, Grafana), incident response, Python Zabbix addons, CI/CD, containerization, and backups.</p>
-            <ul>
-              <li>Supervision setup and tuning (dashboards, alerting, SLA)</li>
-              <li>Python and Shell automation (internal tooling, integrations)</li>
-              <li>Docker/Kubernetes, Git, CI/CD pipelines</li>
-              <li>Nutanix AHV, networking and security (proxy, TLS)</li>
-              <li>Access and identity management (Keycloak)</li>
-              <li>Documentation and knowledge sharing (Wiki, internal training)</li>
-              <li>Configuration management (Terraform)</li>
-            </ul>
+        <% (data.experiences || []).forEach(exp => { %>
+          <div class="timeline-item">
+            <div class="timeline-date"><%= exp.start_year %> - <%= exp.end_year ? exp.end_year : 'Present' %></div>
+            <div class="timeline-content">
+              <h3><%= exp.title %></h3>
+              <% if (exp.subtitle) { %><h4><%= exp.subtitle %></h4><% } %>
+              <% if (exp.description) { %><p><%= exp.description %></p><% } %>
+            </div>
           </div>
-        </div>
-        <div class="timeline-item">
-          <div class="timeline-date">2019 - Present</div>
-          <div class="timeline-content">
-            <h3>Education & Homelab</h3>
-            <h4>Self-learning</h4>
-            <p>Strengthened Linux, networking, and Python foundations. Built a homelab (Docker, Python, config management) and personal projects.</p>
-          </div>
-        </div>
+        <% }); %>
       </div>
     </div>
   </section>

@@ -1,11 +1,31 @@
 const express = require('express');
 const path = require('path');
 const nodemailer = require('nodemailer');
+const session = require('express-session');
+const helmet = require('helmet');
+const csrf = require('csurf');
+const bcrypt = require('bcryptjs');
 require('dotenv').config();
+let getPortfolioData = null;
+if (
+  process.env.DB === 'mariadb' ||
+  process.env.DB === 'mysql' ||
+  process.env.MARIADB_HOST ||
+  process.env.MYSQL_HOST ||
+  process.env.MARIADB_URL ||
+  process.env.MYSQL_URL
+) {
+  ({ getPortfolioData } = require('./db-mariadb'));
+  console.log('🔗 Base de données: MariaDB/MySQL');
+} else {
+  ({ getPortfolioData } = require('./db'));
+  console.log('🔗 Base de données: SQLite (fichier local)');
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const CONFIG_SITE_URL = (process.env.SITE_URL || '').replace(/\/$/, '');
+const SESSION_SECRET = process.env.SESSION_SECRET || 'change-me-session-secret';
 
 // Configuration email
 const EMAIL_CONFIG = {
@@ -32,6 +52,55 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // Respecter X-Forwarded-* derrière un reverse proxy (Nginx)
 app.set('trust proxy', 1);
+// Sécurité de base
+app.use(helmet());
+
+// Sessions (stockées en MariaDB si activé)
+let sessionMiddleware;
+try {
+  if (
+    process.env.DB === 'mariadb' ||
+    process.env.DB === 'mysql' ||
+    process.env.MARIADB_HOST ||
+    process.env.MYSQL_HOST ||
+    process.env.MARIADB_URL ||
+    process.env.MYSQL_URL
+  ) {
+    const MySQLStore = require('express-mysql-session')(session);
+    // Reconstituer la config depuis l'env (comme db-mariadb)
+    const URL = process.env.MARIADB_URL || process.env.MYSQL_URL;
+    const store = URL ? new MySQLStore(URL) : new MySQLStore({
+      host: process.env.MARIADB_HOST || process.env.MYSQL_HOST || '127.0.0.1',
+      port: Number(process.env.MARIADB_PORT || process.env.MYSQL_PORT || 3306),
+      user: process.env.MARIADB_USER || process.env.MYSQL_USER || 'portfolio',
+      password: process.env.MARIADB_PASSWORD || process.env.MYSQL_PASSWORD || 'portfolio',
+      database: process.env.MARIADB_DATABASE || process.env.MYSQL_DATABASE || 'portfolio',
+      createDatabaseTable: true,
+      schema: { tableName: 'sessions' },
+    });
+    sessionMiddleware = session({
+      store,
+      secret: SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        httpOnly: true,
+        secure: !!(process.env.SESSION_SECURE === 'true'),
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60 * 8, // 8h
+      },
+    });
+  }
+} catch {}
+if (!sessionMiddleware) {
+  sessionMiddleware = session({
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { httpOnly: true, sameSite: 'lax' },
+  });
+}
+app.use(sessionMiddleware);
 
 // Locals for language toggle (compute matching FR/EN paths)
 app.use((req, res, next) => {
@@ -45,148 +114,265 @@ app.use((req, res, next) => {
   next();
 });
 
-// Données du portfolio
-const portfolioData = {
-  name: "Mathias Legrand",
-  title: "Développeur DevOps et Python",
-  email: process.env.CONTACT_EMAIL || process.env.EMAIL_USER || "contact@mathiaslegrand.cloud",
-  phone: "+33 1 85 09 12 00",
-  location: "Paris, France",
-  description: "Développeur passionné avec 2+ années d'expérience en gestion d'infrastructure et développement Python. Spécialisé en automatisation, conteneurs, CI/CD, devops, réseaux et rétablissement de services.",
-  skills: [
-    { name: "Zabbix", level: 95 },
-    { name: "Grafana", level: 95 },
-    { name: "Nutanix AHV", level: 95 },
-    { name: "Cloudflare", level: 90 },
-    { name: "Git", level: 95 },
-    { name: "Docker", level: 90 },
-    { name: "Python", level: 95 },
-    { name: "Puppet", level: 80 },
-    { name: "Kubernetes", level: 70 },
-    { name: "CI/CD", level: 90 },
-    { name: "Linux", level: 90 },
-    { name: "Réseaux", level: 85 },
-    { name: "Terraform", level: 70 },
-    { name: "Shell scripting", level: 80 },
-    { name: "Keycloak", level: 85 },
-    { name: "TLS/SSL", level: 85 },
-    { name: "RBAC", level: 80 },
-    { name: "Automatisation", level: 90 },
-    { name: "DNS", level: 80 },
-    { name: "Proxy / Reverse proxy", level: 80 },
-    { name: "OVH", level: 90 },
-    { name: "AWS", level: 70 },
-    { name: "Vmware", level: 70 }
-  ],
-  projects: [
-    {
-      title: "Technicien DevOps - KEENTON SAS (CDI)",
-      description: "Gestion de l'infrastructure cloud auto hébergée, supervision des systèmes, gestion des incidents, développement d'addons pour zabbix en Python.",
-      technologies: [
-        "Zabbix",
-        "Grafana",
-        "Nutanix AHV",
-        "Cloudflare",
-        "Git",
-        "Docker",
-        "Python",
-        "Puppet",
-        "Kubernetes",
-        "CI/CD",
-        "Linux",
-        "Réseaux",
-        "Terraform",
-        "Shell scripting",
-        "Keycloak",
-        "TLS/SSL",
-        "RBAC",
-        "Automatisation",
-        "DNS",
-        "Proxy / Reverse proxy",
-        "OVH",
-        "AWS",
-        "Vmware"
-      ],
-  image: "/images/placeholder-project.svg"
-  }
-  ],
-  social: {
-    github: "https://github.com/ahumain",
-    linkedin: "https://linkedin.com/in/mathiaslegrand",
-  }
-};
+// CSRF protection (after session, after locals)
+const csrfProtection = csrf({ ignoreMethods: ['GET', 'HEAD', 'OPTIONS'] });
+app.use(csrfProtection);
+app.use((req, res, next) => {
+  try { res.locals.csrfToken = req.csrfToken ? req.csrfToken() : undefined; } catch {}
+  next();
+});
 
-// Ordonner les compétences par niveau décroissant (puis par nom pour stabilité)
-portfolioData.skills.sort((a, b) => (b.level - a.level) || a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' }));
+// Auth pages (login/logout) and Admin mount with session guard
+const ADMIN_PATH = (process.env.ADMIN_PATH || '/__admin').replace(/\/$/, '');
+function requireLogin(req, res, next) {
+  if (req.session && req.session.isAdmin) return next();
+  // keep target for redirect after login
+  const nextUrl = encodeURIComponent(req.originalUrl || ADMIN_PATH);
+  return res.redirect(`/login?next=${nextUrl}`);
+}
 
-// Variante EN des données (titre/description en anglais)
-const portfolioDataEn = {
-  ...portfolioData,
-  title: "DevOps & Python Developer",
-  description: "Passionate developer with 2+ years of experience in infrastructure operations and Python development. Specialized in automation, containers, CI/CD, DevOps, networking, and service recovery.",
-  location: "Paris, France"
-};
+// Login routes
+app.get('/login', async (req, res) => {
+  const error = req.query.error;
+  // If MariaDB active, support first-user setup by email
+  let firstUserFlow = false;
+  let setupInfo = null;
+  try {
+    const { getAdminUserCount, createSetupTokenForEmail, getActiveToken } = require('./db-mariadb');
+    const adminEmail = process.env.ADMIN_EMAIL || process.env.CONTACT_EMAIL || EMAIL_CONFIG.auth.user;
+    if (adminEmail) {
+      const count = await getAdminUserCount();
+      if (count === 0) {
+        firstUserFlow = true;
+        const existing = await getActiveToken(adminEmail, 'setup');
+        const token = existing ? existing.token : await createSetupTokenForEmail(adminEmail, 120);
+        const url = `${(CONFIG_SITE_URL || `${req.protocol}://${req.get('host')}`).replace(/\/$/, '')}/setup?token=${encodeURIComponent(token)}`;
+        setupInfo = { email: adminEmail, url };
+        try {
+          await transporter.sendMail({
+            from: `"Portfolio Admin" <${EMAIL_CONFIG.auth.user}>`,
+            to: adminEmail,
+            subject: 'Configuration de votre accès admin',
+            text: `Bonjour,\n\nCliquez sur ce lien pour définir votre mot de passe admin: ${url}\nCe lien est valable 2 heures.`,
+            html: `<p>Bonjour,</p><p>Cliquez sur ce lien pour définir votre mot de passe admin:</p><p><a href="${url}">${url}</a></p><p>Ce lien est valable 2 heures.</p>`
+          });
+        } catch (e) {
+          console.error('Erreur envoi email setup:', e.message);
+        }
+      }
+    }
+  } catch {}
+  res.render('admin/login', { error, next: req.query.next || ADMIN_PATH, csrfToken: res.locals.csrfToken, firstUserFlow, setupInfo });
+});
+
+app.post('/login', csrfProtection, async (req, res) => {
+  const { username, password, next: nextUrl } = req.body || {};
+  const expectedUser = process.env.ADMIN_USER || username; // optional, not used in email-first flow
+  const hash = process.env.ADMIN_PASSWORD_HASH;
+  const pass = process.env.ADMIN_PASS || 'change-me';
+  let ok = false;
+  // Email-first auth: if ADMIN_EMAIL is set and a user exists in admin_users, validate against DB hash
+  try {
+    const { getAdminUserByEmail } = require('./db-mariadb');
+    const email = (process.env.ADMIN_EMAIL || '').trim();
+    if (email) {
+      const u = await getAdminUserByEmail(email);
+      if (u && u.password_hash) {
+        ok = await bcrypt.compare(password || '', u.password_hash);
+        if (ok) req.session.username = email;
+      }
+    }
+  } catch {}
+  // Fallback to env-based
+  if (!ok && username === expectedUser) {
+    if (hash) {
+      try { ok = await bcrypt.compare(password || '', hash); } catch { ok = false; }
+    } else {
+      ok = (password || '') === pass;
+    }
+  }
+  if (!ok) return res.redirect('/login?error=1');
+  req.session.isAdmin = true;
+  req.session.username = expectedUser;
+  res.redirect(nextUrl || ADMIN_PATH);
+});
+
+app.post('/logout', csrfProtection, (req, res) => {
+  req.session.destroy(() => res.redirect('/login'));
+});
+
+// First-user setup: GET /setup?token=... renders password form; POST sets password
+app.get('/setup', async (req, res) => {
+  const token = req.query.token || '';
+  res.render('admin/setup', { token, error: req.query.error, csrfToken: res.locals.csrfToken });
+});
+
+app.post('/setup', csrfProtection, async (req, res) => {
+  const { token, password } = req.body || {};
+  if (!token || !password) return res.redirect('/setup?error=1');
+  try {
+    const { consumeTokenAndSetPassword } = require('./db-mariadb');
+    const bcrypt = require('bcryptjs');
+    const hash = await bcrypt.hash(password, 12);
+    const email = await consumeTokenAndSetPassword(token, hash);
+    // auto login
+    req.session.isAdmin = true;
+    req.session.username = email;
+    res.redirect(ADMIN_PATH);
+  } catch (e) {
+    console.error('Setup error:', e.message);
+    res.redirect('/setup?error=1');
+  }
+});
+
+// Admin (hidden route) - only available when MariaDB is active
+try {
+  if (getPortfolioData && (process.env.DB === 'mariadb' || process.env.MARIADB_HOST || process.env.MARIADB_URL)) {
+    const adminRouter = require('./routes/admin');
+    app.use(ADMIN_PATH, requireLogin, adminRouter);
+  }
+} catch {}
+
+// Route to trigger a password reset email for the admin
+app.post('/admin/reset-password', requireLogin, csrfProtection, async (req, res, next) => {
+  try {
+    const { createResetTokenForEmail } = require('./db-mariadb');
+    const adminEmail = process.env.ADMIN_EMAIL || process.env.CONTACT_EMAIL || EMAIL_CONFIG.auth.user;
+    if (!adminEmail) return res.status(400).send('ADMIN_EMAIL manquant');
+    const token = await createResetTokenForEmail(adminEmail, 120);
+    const url = `${(CONFIG_SITE_URL || `${req.protocol}://${req.get('host')}`).replace(/\/$/, '')}/setup?token=${encodeURIComponent(token)}`;
+    await transporter.sendMail({
+      from: `"Portfolio Admin" <${EMAIL_CONFIG.auth.user}>`,
+      to: adminEmail,
+      subject: 'Réinitialisation de votre mot de passe admin',
+      text: `Cliquez sur ce lien pour réinitialiser votre mot de passe: ${url}\nValide 2 heures.`,
+      html: `<p>Cliquez sur ce lien pour réinitialiser votre mot de passe:</p><p><a href="${url}">${url}</a></p><p>Valide 2 heures.</p>`
+    });
+    if ((req.get('accept')||'').includes('application/json')) return res.json({ ok: true });
+    res.redirect(ADMIN_PATH);
+  } catch (e) {
+    next(e);
+  }
+});
+
+// Helper to load data (FR/EN) from DB with proper i18n
+async function loadData() {
+  const [frRaw, enRaw] = await Promise.all([
+    Promise.resolve(getPortfolioData('fr')),
+    Promise.resolve(getPortfolioData('en')),
+  ]);
+  const frOrdered = {
+    ...frRaw,
+    skills: [...(frRaw.skills || [])].sort((a, b) => (b.level - a.level) || a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' })),
+  };
+  const enOrdered = {
+    ...enRaw,
+    skills: [...(enRaw.skills || [])].sort((a, b) => (b.level - a.level) || a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })),
+  };
+  return { fr: frOrdered, en: enOrdered };
+}
+let portfolioData = {};
+let portfolioDataEn = {};
 
 // Routes
-app.get('/', (req, res) => {
-  res.render('index', { data: portfolioData });
+app.get('/', async (req, res, next) => {
+  try {
+    ({ fr: portfolioData, en: portfolioDataEn } = await loadData());
+    res.render('index', { data: portfolioData });
+  } catch (e) { next(e); }
 });
 
-app.get('/about', (req, res) => {
-  res.render('about', { data: portfolioData });
+app.get('/about', async (req, res, next) => {
+  try {
+    ({ fr: portfolioData, en: portfolioDataEn } = await loadData());
+    res.render('about', { data: portfolioData });
+  } catch (e) { next(e); }
 });
 
-app.get('/projects', (req, res) => {
-  res.render('projects', { data: portfolioData });
+app.get('/projects', async (req, res, next) => {
+  try {
+    ({ fr: portfolioData, en: portfolioDataEn } = await loadData());
+    res.render('projects', { data: portfolioData });
+  } catch (e) { next(e); }
 });
 
-app.get('/contact', (req, res) => {
-  res.render('contact', { data: portfolioData });
+app.get('/contact', async (req, res, next) => {
+  try {
+    ({ fr: portfolioData, en: portfolioDataEn } = await loadData());
+    res.render('contact', { data: portfolioData });
+  } catch (e) { next(e); }
 });
 
 // Page CV (aperçu intégré du PDF)
-app.get('/cv', (req, res) => {
-  res.render('cv', { data: portfolioData });
+app.get('/cv', async (req, res, next) => {
+  try {
+    ({ fr: portfolioData, en: portfolioDataEn } = await loadData());
+    res.render('cv', { data: portfolioData });
+  } catch (e) { next(e); }
 });
 
 // Page FAQ dédiée
-app.get('/faq', (req, res) => {
-  const embed = req.query.embed === '1';
-  res.render('faq', { data: portfolioData, embed });
+app.get('/faq', async (req, res, next) => {
+  try {
+    ({ fr: portfolioData, en: portfolioDataEn } = await loadData());
+    const embed = req.query.embed === '1';
+    res.render('faq', { data: portfolioData, embed });
+  } catch (e) { next(e); }
 });
 
 // English pages
-app.get('/en', (req, res) => {
-  res.render('en/index', { data: portfolioDataEn });
+app.get('/en', async (req, res, next) => {
+  try {
+    ({ fr: portfolioData, en: portfolioDataEn } = await loadData());
+    res.render('en/index', { data: portfolioDataEn });
+  } catch (e) { next(e); }
 });
 
-app.get('/en/about', (req, res) => {
-  res.render('en/about', { data: portfolioDataEn });
+app.get('/en/about', async (req, res, next) => {
+  try {
+    ({ fr: portfolioData, en: portfolioDataEn } = await loadData());
+    res.render('en/about', { data: portfolioDataEn });
+  } catch (e) { next(e); }
 });
 
-app.get('/en/projects', (req, res) => {
-  res.render('en/projects', { data: portfolioDataEn });
+app.get('/en/projects', async (req, res, next) => {
+  try {
+    ({ fr: portfolioData, en: portfolioDataEn } = await loadData());
+    res.render('en/projects', { data: portfolioDataEn });
+  } catch (e) { next(e); }
 });
 
-app.get('/en/contact', (req, res) => {
-  res.render('en/contact', { data: portfolioDataEn });
+app.get('/en/contact', async (req, res, next) => {
+  try {
+    ({ fr: portfolioData, en: portfolioDataEn } = await loadData());
+    res.render('en/contact', { data: portfolioDataEn });
+  } catch (e) { next(e); }
 });
 
-app.get('/en/cv', (req, res) => {
-  res.render('en/cv', { data: portfolioDataEn });
+app.get('/en/cv', async (req, res, next) => {
+  try {
+    ({ fr: portfolioData, en: portfolioDataEn } = await loadData());
+    res.render('en/cv', { data: portfolioDataEn });
+  } catch (e) { next(e); }
 });
 
-app.get('/en/faq', (req, res) => {
-  const embed = req.query.embed === '1';
-  res.render('en/faq', { data: portfolioDataEn, embed });
+app.get('/en/faq', async (req, res, next) => {
+  try {
+    ({ fr: portfolioData, en: portfolioDataEn } = await loadData());
+    const embed = req.query.embed === '1';
+    res.render('en/faq', { data: portfolioDataEn, embed });
+  } catch (e) { next(e); }
 });
 
 // SEO: robots.txt
 app.get('/robots.txt', (req, res) => {
   const baseUrl = (CONFIG_SITE_URL || `${req.protocol}://${req.get('host')}`).replace(/\/$/, '');
+  const ADMIN_R = (process.env.ADMIN_PATH || '/__admin').replace(/\/$/, '');
   res.type('text/plain').send([
     'User-agent: *',
     'Allow: /',
+    `Disallow: ${ADMIN_R}`,
+    'Disallow: /login',
     'Disallow: /test-email',
     'Disallow: /test-contact',
     `Sitemap: ${baseUrl}/sitemap.xml`
@@ -258,6 +444,8 @@ app.post('/contact', async (req, res) => {
   }
 
   try {
+    // Toujours charger depuis la BDD pour utiliser les infos à jour
+    ({ fr: portfolioData, en: portfolioDataEn } = await loadData());
     // Email pour vous (notification)
     const ownerEmailOptions = {
       from: `"Portfolio Contact" <${EMAIL_CONFIG.auth.user}>`,
@@ -416,8 +604,22 @@ app.post('/contact', async (req, res) => {
 });
 
 // API pour récupérer les projets (pour AJAX)
-app.get('/api/projects', (req, res) => {
-  res.json(portfolioData.projects);
+app.get('/api/projects', async (req, res, next) => {
+  try {
+    ({ fr: portfolioData } = await loadData());
+    res.json(portfolioData.projects);
+  } catch (e) { next(e); }
+});
+
+// Health check for DB connectivity (dev only)
+app.get('/_health/db', async (req, res) => {
+  if (process.env.NODE_ENV === 'production') return res.status(404).end();
+  try {
+    const data = await Promise.resolve(getPortfolioData('fr'));
+    res.json({ ok: true, profile: { name: data.name, title: data.title } });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: String(e.message || e) });
+  }
 });
 
 // Route pour tester la configuration email (à retirer en production)

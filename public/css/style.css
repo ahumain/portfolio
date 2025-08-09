@@ -50,6 +50,16 @@ body.no-scroll {
   padding: 0 20px;
 }
 
+/* Full-width variant when needed */
+.container--fluid {
+  max-width: 100%;
+}
+
+/* Optional: fluid nav container if applied */
+.nav-container--fluid {
+  max-width: 100%;
+}
+
 /* Navigation */
 .navbar {
   background: rgba(255, 255, 255, 0.95);

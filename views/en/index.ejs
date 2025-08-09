@@ -52,7 +52,7 @@
       <div class="hero-image">
         <div class="profile-card">
           <div class="profile-image">
-            <img src="/images/profile.jpg" alt="Profile photo" onerror="this.src='/images/placeholder-profile.jpg'">
+            <img src="/images/placeholder-profile.jpg" alt="Profile photo" onerror="this.src='/images/placeholder-profile.jpg'">
           </div>
           <div class="profile-info">
             <h3><%= data.name %></h3>
@@ -70,6 +70,16 @@
       <i class="fas fa-arrow-down"></i>
     </div>
   </section>
+
+  <% if (data.stats) { %>
+  <section class="stats" style="padding: 20px 0;">
+    <div class="container" style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+      <div class="stat-badge">🗓️ <strong><%= data.stats.years %>+</strong> years</div>
+      <div class="stat-badge">📦 <strong><%= data.stats.projects %>+</strong> projects</div>
+      <div class="stat-badge">🛠️ <strong><%= data.stats.skills %>+</strong> tech</div>
+    </div>
+  </section>
+  <% } %>
 
   <!-- Skills Section -->
   <section class="skills">

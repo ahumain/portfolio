@@ -54,10 +54,14 @@
   <section class="projects-grid-section">
     <div class="container">
       <div class="projects-grid" id="projectsGrid">
-        <% data.projects.forEach((project, index) => { %>
+        <% data.projects.forEach((project, index) => { 
+          const raw = (project.image || '').trim();
+          const isExt = /^https?:\/\//i.test(raw);
+          const safeSrc = raw ? (isExt ? raw : (raw.startsWith('/') ? raw : '/images/' + raw)) : '/images/placeholder-project.svg';
+        %>
         <div class="project-card" data-category="web">
           <div class="project-image">
-            <img src="<%= project.image %>" alt="<%= project.title %>" onerror="this.src='/images/placeholder-project.svg'">
+            <img src="<%= safeSrc %>" alt="<%= project.title || 'Project' %>" onerror="this.onerror=null;this.src='/images/placeholder-project.svg'">
             <div class="project-overlay">
               <div class="project-links">
                 <% if (project.github) { %>

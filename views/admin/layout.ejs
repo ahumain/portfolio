@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin • <%= (data && data.profile && data.profile.name) || 'Portfolio' %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="icon" href="/images/placeholder-profile.svg">
+  <meta name="robots" content="noindex, nofollow">
+  <style>/* minimal fallback if admin.css fails */ .hidden{display:none} .btn{cursor:pointer} </style>
+  <% /* CSRF-ready placeholder if needed later */ %>
+</head>
+<body class="admin-body">
+  <aside class="admin-sidebar">
+    <div class="brand">Dashboard</div>
+    <nav>
+      <a href="#profile" data-target="profile" class="nav-link active">Profil</a>
+      <a href="#social" data-target="social" class="nav-link">Réseaux</a>
+      <a href="#skills" data-target="skills" class="nav-link">Compétences</a>
+      <a href="#projects" data-target="projects" class="nav-link">Projets</a>
+    </nav>
+    <div class="admin-meta">
+      <small><%= siteUrl %></small>
+    </div>
+  </aside>
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <div>
+        <h1>Administration</h1>
+        <p class="subtitle">Gérez le contenu affiché sur votre portfolio</p>
+      </div>
+      <div class="admin-actions">
+        <a class="btn" href="/" target="_blank">Voir le site ↗︎</a>
+      </div>
+    </header>
+    <section class="admin-content">
+      <%- body %>
+    </section>
+  </main>
+  <div id="toast" class="toast hidden"></div>
+  <script src="/js/admin.js" defer></script>
+</body>
+</html>
