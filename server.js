@@ -5,7 +5,7 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const SITE_URL = (process.env.SITE_URL || '').replace(/\/$/, '') || `http://localhost:${PORT}`;
+const CONFIG_SITE_URL = (process.env.SITE_URL || '').replace(/\/$/, '');
 
 // Configuration email
 const EMAIL_CONFIG = {
@@ -30,6 +30,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+// Respecter X-Forwarded-* derrière un reverse proxy (Nginx)
+app.set('trust proxy', 1);
 
 // Locals for language toggle (compute matching FR/EN paths)
 app.use((req, res, next) => {
@@ -38,7 +40,8 @@ app.use((req, res, next) => {
   res.locals.currentPath = req.path;
   res.locals.frPath = isEn ? (basePath || '/') : basePath;
   res.locals.enPath = isEn ? req.path : (basePath === '/' ? '/en' : '/en' + basePath);
-  res.locals.siteUrl = SITE_URL;
+  const baseUrl = (CONFIG_SITE_URL || `${req.protocol}://${req.get('host')}`).replace(/\/$/, '');
+  res.locals.siteUrl = baseUrl;
   next();
 });
 
@@ -180,17 +183,19 @@ app.get('/en/faq', (req, res) => {
 
 // SEO: robots.txt
 app.get('/robots.txt', (req, res) => {
+  const baseUrl = (CONFIG_SITE_URL || `${req.protocol}://${req.get('host')}`).replace(/\/$/, '');
   res.type('text/plain').send([
     'User-agent: *',
     'Allow: /',
     'Disallow: /test-email',
     'Disallow: /test-contact',
-    `Sitemap: ${SITE_URL}/sitemap.xml`
+    `Sitemap: ${baseUrl}/sitemap.xml`
   ].join('\n'));
 });
 
 // SEO: sitemap.xml with FR/EN and hreflang alternates
 app.get('/sitemap.xml', (req, res) => {
+  const baseUrl = (CONFIG_SITE_URL || `${req.protocol}://${req.get('host')}`).replace(/\/$/, '');
   const frRoutes = ['/', '/about', '/projects', '/contact', '/cv', '/faq'];
   const enRoutes = ['/en', '/en/about', '/en/projects', '/en/contact', '/en/cv', '/en/faq'];
   const lastmod = new Date().toISOString();
@@ -204,23 +209,23 @@ app.get('/sitemap.xml', (req, res) => {
     const en = enRoutes[i];
     urls.push(`
     <url>
-      <loc>${SITE_URL}${fr}</loc>
+      <loc>${baseUrl}${fr}</loc>
       <lastmod>${lastmod}</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.8</priority>
-      <xhtml:link rel="alternate" hreflang="fr" href="${SITE_URL}${fr}" />
-      <xhtml:link rel="alternate" hreflang="en" href="${SITE_URL}${en}" />
-      <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}${fr}" />
+      <xhtml:link rel="alternate" hreflang="fr" href="${baseUrl}${fr}" />
+      <xhtml:link rel="alternate" hreflang="en" href="${baseUrl}${en}" />
+      <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}${fr}" />
     </url>`);
     urls.push(`
     <url>
-      <loc>${SITE_URL}${en}</loc>
+      <loc>${baseUrl}${en}</loc>
       <lastmod>${lastmod}</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.8</priority>
-      <xhtml:link rel="alternate" hreflang="fr" href="${SITE_URL}${fr}" />
-      <xhtml:link rel="alternate" hreflang="en" href="${SITE_URL}${en}" />
-      <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}${fr}" />
+      <xhtml:link rel="alternate" hreflang="fr" href="${baseUrl}${fr}" />
+      <xhtml:link rel="alternate" hreflang="en" href="${baseUrl}${en}" />
+      <xhtml:link rel="alternate" hreflang="x-default" href="${baseUrl}${fr}" />
     </url>`);
   }
 
